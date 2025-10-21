@@ -15,50 +15,36 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y g++ cmake lcov
+      run: sudo apt-get update && sudo apt-get install -y cmake g++ lcov
 
-    - name: Clean build dir
-      run: rm -rf build
+    - name: Clean previous build
+      run: rm -rf build coverage.info coverage-report
 
-    - name: Configure CMake (with coverage)
-      run: |
-        cmake -S . -B build \
-          -DCMAKE_BUILD_TYPE=Debug \
-          -DCMAKE_CXX_FLAGS="--coverage -O0 -g" \
-          -DCMAKE_C_FLAGS="--coverage -O0 -g"
+    - name: Configure CMake
+      run: cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="--coverage"
 
     - name: Build
       run: cmake --build build
 
-    - name: Run tests (ctest)
-      run: ctest --test-dir build --output-on-failure
+    - name: Run tests
+      run: ./build/runTests
 
-    # ---- Coverage: only repo files, exclude gtest/system/tests/CMake junk ----
-    - name: Generate coverage (lcov -> coverage.info)
+    - name: Generate coverage report (.info)
       run: |
-        # capture raw coverage
-        lcov --directory build --capture --output-file coverage.info --ignore-errors mismatch
-
-        # keep only files under the current repo (pwd)
-        lcov --extract coverage.info "$(pwd)/*" --output-file coverage.info
-
-        # drop unwanted paths: gtest, deps, cmake internals, system headers, tests
+        lcov --directory build --capture --output-file coverage.info --ignore-errors mismatch --no-external
+        # test dosyaları ve 3rd party klasörleri hariç tut
         lcov --remove coverage.info \
-          '*/googletest/*' '*/gtest/*' '*/_deps/*' '*/CMakeFiles/*' \
           '/usr/*' \
-          '*/tests/*' '*/test_*' \
+          '*/_deps/*' \
+          '*/tests/*' \
+          '*/test_*' \
           --output-file coverage.info
 
-        # show summary in logs
-        lcov --list coverage.info
-
-    - name: Generate HTML coverage report
-      run: genhtml coverage.info --output-directory coverage_html
+    - name: Generate HTML report
+      run: genhtml coverage.info --output-directory coverage-report
 
     - name: Upload HTML coverage report
       uses: actions/upload-artifact@v4
       with:
         name: coverage-report
-        path: coverage_html
+        path: coverage-report
