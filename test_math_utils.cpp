@@ -6,6 +6,10 @@ TEST(MathUtilsTest, AddFunction) {
     EXPECT_EQ(Add(-1, 1), 0);
 }
 
+TEST(MathUtilsTest, MulFunction) {
+    EXPECT_EQ(Mul(2, 3), 6);
+}
+
 TEST(MathUtilsTest, DivFunction) {
     EXPECT_EQ(Div(5, 0), 0) << "5 / 0 should equal 0";
     EXPECT_EQ(Div(-1, 1), -1);
@@ -22,7 +26,7 @@ TEST(MathUtilsTest, SubFunction) {
     EXPECT_EQ(Sub(1, -1), 2);
     EXPECT_EQ(Sub(3, -3), 6);
     EXPECT_EQ(Sub(2, 3), -1);
-    EXPECT_EQ(Sub(2, 4), -1) << "2 - 4 should equal -1 (Test)";
+    EXPECT_EQ(Sub(2, 4), -2) << "2 - 4 should equal -1 (Test)";
 }
 
 TEST(MathUtilsTest, Sub_PositiveMinusPositive) {

@@ -8,6 +8,11 @@ int Sub(int a, int b) {
     return a - b;
 }
 
+int Mul(int a, int b)
+{
+    return a * b;
+}
+
 double Div(int a, int b) {
     if (b == 0) {
         // Hata durumu: istediğine göre yönetebilirsin
