@@ -131,6 +131,8 @@
     <ClCompile Include="math_utils.cpp" />
     <ClCompile Include="test_animal.cpp" />
     <ClCompile Include="test_math_utils.cpp" />
+    <ClCompile Include="test_vehicle.cpp" />
+    <ClCompile Include="Vehicle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -138,6 +140,7 @@
   <ItemGroup>
     <ClInclude Include="Animal.h" />
     <ClInclude Include="math_utils.h" />
+    <ClInclude Include="Vehicle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
