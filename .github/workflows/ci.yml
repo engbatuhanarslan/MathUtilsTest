@@ -1,0 +1,24 @@
+name: C++ MSBuild CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Build with MSBuild
+      run: msbuild MathUtilsTest.sln /p:Configuration=Debug
+
+    - name: Run tests
+      run: ./x64/Debug/MathUtilsTest.exe
