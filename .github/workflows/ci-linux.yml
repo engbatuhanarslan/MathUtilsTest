@@ -2,7 +2,9 @@ name: C++ CI with Coverage (Linux)
 
 on:
   push:
+    branches: [ "master" ]
   pull_request:
+    branches: [ "master" ]
 
 jobs:
   build:
@@ -17,28 +19,29 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y g++ cmake lcov
 
+    - name: Clean build dir
+      run: rm -rf build
+
     - name: Configure CMake
-      run: |
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="--coverage"
+      run: cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="--coverage"
 
     - name: Build
       run: cmake --build build
 
     - name: Run tests
-      run: ctest --test-dir build --output-on-failure
+      run: ./build/runTests
 
     - name: Generate coverage report (.info)
       run: |
-        lcov --directory build --capture --output-file coverage.info
+        lcov --directory build --capture --output-file coverage.info --ignore-errors mismatch
         lcov --remove coverage.info '/usr/*' --output-file coverage.info
         lcov --list coverage.info
 
     - name: Generate HTML report
-      run: |
-        genhtml coverage.info -o coverage_html
+      run: genhtml coverage.info --output-directory coverage_html
 
     - name: Upload HTML coverage report
       uses: actions/upload-artifact@v4
       with:
-        name: coverage-html
+        name: coverage-report
         path: coverage_html
