@@ -1,4 +1,4 @@
-#include "math_utils.h"
+﻿#include "math_utils.h"
 
 int Add(int a, int b) {
     return a + b;
@@ -7,6 +7,15 @@ int Add(int a, int b) {
 int Sub(int a, int b) {
     return a - b;
 }
+
+double Div(int a, int b) {
+    if (b == 0) {
+        // Hata durumu: istediğine göre yönetebilirsin
+        return 0.0; // veya NAN / throw std::runtime_error
+    }
+    return static_cast<double>(a) / b;
+}
+
 
 int Factorial(int n) {
     if (n < 0) return -1;
