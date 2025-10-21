@@ -22,6 +22,7 @@ jobs:
 
     - name: Build with MSBuild
       run: msbuild MathUtilsTest.sln /p:Configuration=Debug
+  
+    - name: Run Vehicle tests
+      run: ./x64/Debug/MathUtilsTest.exe --gtest_filter=VehicleTest.*
 
-    - name: Run tests
-      run: ./x64/Debug/MathUtilsTest.exe
