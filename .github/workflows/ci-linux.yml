@@ -1,0 +1,32 @@
+name: C++ CI with Coverage
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install deps
+        run: sudo apt-get install -y lcov g++ cmake
+
+      - name: Build with coverage
+        run: |
+          cmake -DCMAKE_CXX_FLAGS="--coverage" .
+          make
+
+      - name: Run tests
+        run: ./MathUtilsTest
+
+      - name: Generate coverage report
+        run: |
+          lcov --capture --directory . --output-file coverage.info
+          lcov --remove coverage.info '/usr/*' --output-file coverage.info
+          lcov --list coverage.info
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage.info
