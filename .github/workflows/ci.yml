@@ -14,8 +14,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Add MSBuild to PATH
+    - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
+
+    - name: Restore dependencies
+      run: nuget restore MathUtilsTest.sln
 
     - name: Build with MSBuild
       run: msbuild MathUtilsTest.sln /p:Configuration=Debug
