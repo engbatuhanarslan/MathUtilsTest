@@ -6,6 +6,10 @@ TEST(MathUtilsTest, AddFunction) {
     EXPECT_EQ(Add(-1, 1), 0);
 }
 
+TEST(MathUtilsTest, SquareFunction) {
+    EXPECT_EQ(Square(2, 2), 4);
+}
+
 TEST(MathUtilsTest, MulFunction) {
     EXPECT_EQ(Mul(2, 3), 6);
 }
