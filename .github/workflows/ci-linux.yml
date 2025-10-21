@@ -6,27 +6,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Install deps
-        run: sudo apt-get install -y lcov g++ cmake
+      - name: Install dependencies
+        run: sudo apt-get install -y cmake g++ lcov
 
-      - name: Build with coverage
+      - name: Build
         run: |
-          cmake -DCMAKE_CXX_FLAGS="--coverage" .
+          mkdir build
+          cd build
+          cmake ..
           make
 
       - name: Run tests
-        run: ./MathUtilsTest
+        run: ./build/your_test_binary --gtest_output=xml:test-results.xml
 
-      - name: Generate coverage report
+      - name: Generate coverage
         run: |
           lcov --capture --directory . --output-file coverage.info
           lcov --remove coverage.info '/usr/*' --output-file coverage.info
-          lcov --list coverage.info
+          genhtml coverage.info --output-directory coverage
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage.info
+          path: coverage/
