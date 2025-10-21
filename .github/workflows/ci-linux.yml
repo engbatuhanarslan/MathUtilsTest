@@ -22,22 +22,39 @@ jobs:
     - name: Clean build dir
       run: rm -rf build
 
-    - name: Configure CMake
-      run: cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="--coverage"
+    - name: Configure CMake (with coverage)
+      run: |
+        cmake -S . -B build \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_CXX_FLAGS="--coverage -O0 -g" \
+          -DCMAKE_C_FLAGS="--coverage -O0 -g"
 
     - name: Build
       run: cmake --build build
 
-    - name: Run tests
-      run: ./build/runTests
+    - name: Run tests (ctest)
+      run: ctest --test-dir build --output-on-failure
 
-    - name: Generate coverage report (.info)
+    # ---- Coverage: only repo files, exclude gtest/system/tests/CMake junk ----
+    - name: Generate coverage (lcov -> coverage.info)
       run: |
+        # capture raw coverage
         lcov --directory build --capture --output-file coverage.info --ignore-errors mismatch
-        lcov --remove coverage.info '/usr/*' '*/gtest/*' -o coverage.filtered.info
+
+        # keep only files under the current repo (pwd)
+        lcov --extract coverage.info "$(pwd)/*" --output-file coverage.info
+
+        # drop unwanted paths: gtest, deps, cmake internals, system headers, tests
+        lcov --remove coverage.info \
+          '*/googletest/*' '*/gtest/*' '*/_deps/*' '*/CMakeFiles/*' \
+          '/usr/*' \
+          '*/tests/*' '*/test_*' \
+          --output-file coverage.info
+
+        # show summary in logs
         lcov --list coverage.info
 
-    - name: Generate HTML report
+    - name: Generate HTML coverage report
       run: genhtml coverage.info --output-directory coverage_html
 
     - name: Upload HTML coverage report
